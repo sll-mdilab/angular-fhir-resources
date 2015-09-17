@@ -20,7 +20,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/sll-mdilab/angular-fhir-resources-pub.git"
+    "url": "git://github.com/sll-mdilab/angular-fhir-resources.git"
   },
   "appPath": "app",
   "moduleName": "angularFhirResources"

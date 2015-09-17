@@ -2,29 +2,7 @@
 
 This library is used to communicate with the FHIR backend service provided by the Medical Device Integration (MDI) Lab at the Innovation Centre at Karolinska, Solna.
 
-To use the library, import it using `bower`. Since this is a private repo you need to authenticate your Github account. 
-Follow the instructions shown in this video, a summarized description is shown below: https://youtu.be/ExU_ZcONHxs
-
-**In Github:**
-
-1. Go to Settings --> Personal Access Token and generate a new Access Token. 
-2. The Access Token needs the *repo* scope to be able to access private repos.
-3. Copy the string generated.
-   
-**In the terminal:**
-
-1. Create a new file in the user directory called `.netrc` if it doesn't exist: `touch .netrc`
-2. Add the following to the `.netrc` file and replace what's inside brackets with your credentials:
-
-    ```
-    machine github.com
-  	  login [GITHUB USERNAME]
-  	  password [GENERATED ACCESS TOKEN STRING]
-    ```
-
-3. Execute: `git config --global url."https://github".insteadOf git://github`. This will enforce https instead of ssh.
-
-You can now install angular-fhir-resources through bower by running:
+You can install angular-fhir-resources through bower by running:
 
 ```javascript
 bower install sll-mdilab/angular-fhir-resources --save
@@ -103,7 +81,7 @@ The procedure when updating is the following:
 
 3. Run `grunt build` to build the dist files.
 
-4. Commit the build files: `git commit -m 'vX.Y.Z'`.
+4. Stage and commit the build files: `git add --all && git commit -m 'vX.Y.Z'`.
 
 5. Run `git tag vX.Y.Z`.
 
