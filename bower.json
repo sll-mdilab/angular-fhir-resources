@@ -18,6 +18,10 @@
     ".editorconfig",
     ".travis.yml"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sll-mdilab/angular-fhir-resources-pub.git"
+  },
   "appPath": "app",
   "moduleName": "angularFhirResources"
 }
