@@ -138,7 +138,7 @@ module.exports = function (grunt) {
     'concat': {
       'dist': {
         'src': ['<%= yeoman.app %>/scripts/{,*/}*.js'],
-        'dest': 'dist/<%= pkg.name %>-<%= pkg.version %>.js'
+        'dest': '<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
 
@@ -148,7 +148,7 @@ module.exports = function (grunt) {
       },
       'dist': {
         'files': {
-          'dist/<%= pkg.name %>-<%= pkg.version %>.min.js': ['dist/<%= pkg.name %>-<%= pkg.version %>.js']
+          '<%= pkg.name %>-<%= pkg.version %>.min.js': ['<%= pkg.name %>-<%= pkg.version %>.js']
         }
       }
     },
