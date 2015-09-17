@@ -1,0 +1,38 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>FHIR Resources</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+  </head>
+  <body ng-app="angularFhirResources">
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-base64/angular-base64.js"></script>
+    <script src="bower_components/sprintf/src/sprintf.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/app.js"></script>
+        <script src="scripts/services/fhirconfig.js"></script>
+        <script src="scripts/services/fhirdevice.js"></script>
+        <script src="scripts/services/fhirdeviceusestatement.js"></script>
+        <script src="scripts/services/fhirencounter.js"></script>
+        <script src="scripts/services/fhirobservation.js"></script>
+        <script src="scripts/services/fhirpatient.js"></script>
+        <script src="scripts/services/fhirpractitioner.js"></script>
+        <script src="scripts/services/fhirbrokeringreceiver.js"></script>
+        <!-- endbuild -->
+</body>
+</html>
