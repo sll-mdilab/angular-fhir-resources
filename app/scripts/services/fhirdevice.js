@@ -43,6 +43,14 @@ angular.module('angularFhirResources')
       }
     ];
 
+    var defaultDevice = {
+      "id": undefined,
+      "name": "Medical Device",
+      "type": "Medical Device Type",
+      "profileURL": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/300px-No_image_available.svg.png",
+      "manufacturer": "Medical Device Manufacturer"
+    };
+
 
     // Public API here
     return {
@@ -60,7 +68,15 @@ angular.module('angularFhirResources')
               return entry;
             }
           }
+          var newDevice = angular.copy(defaultDevice);
+          newDevice.id = deviceId;
+          return newDevice;
         }, 500);
+      },
+      getDefaultDevice: function(customDeviceId){
+        var defDevice = angular.copy(defaultDevice);
+        defDevice.id = customDeviceId;
+        return defDevice;
       },
       getResourcePrefix: function(){
         return resourcePrefix;

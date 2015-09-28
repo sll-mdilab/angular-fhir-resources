@@ -30,6 +30,9 @@ angular.module('angularFhirResources')
         });
       },
       getObservationSummaryByDeviceId: function (deviceId, dateRange) {
+        if(deviceId.indexOf('Device/') === 0){
+          deviceId = deviceId.substr('Device/'.length);
+        }
         return $http({
           method: 'GET',
           url: url,
@@ -70,6 +73,9 @@ angular.module('angularFhirResources')
         });
       },
       getObservationsByDeviceId: function (deviceId, dateRange, code) {
+        if(deviceId.indexOf('Device/') === 0){
+          deviceId = deviceId.substr('Device/'.length);
+        }
         return $http({
           method: 'GET',
           url: url,
