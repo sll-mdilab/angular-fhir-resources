@@ -73,6 +73,11 @@ angular.module('angularFhirResources')
           return newDevice;
         }, 500);
       },
+      createDevice: function(newDevice){
+        return $timeout(function(){
+          MOCK_DEVICES.push(newDevice);
+        }, 200);
+      },
       getDefaultDevice: function(customDeviceId){
         var defDevice = angular.copy(defaultDevice);
         defDevice.id = customDeviceId;
