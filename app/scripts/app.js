@@ -11,5 +11,6 @@
 angular
   .module('angularFhirResources', [
     'ngRoute',
-    'base64'
+    'base64',
+    'uuid'
   ]);

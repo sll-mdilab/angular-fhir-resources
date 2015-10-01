@@ -25,6 +25,7 @@ module.exports = function(config) {
       'bower_components/angular/angular.js',
       'bower_components/angular-base64/angular-base64.js',
       'bower_components/sprintf/src/sprintf.js',
+      'bower_components/angular-uuid-service/angular-uuid-service.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",

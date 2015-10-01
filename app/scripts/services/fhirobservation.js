@@ -8,7 +8,7 @@
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirObservation', ['$http', 'fhirConfig', function ($http, fhirConfig) {
+  .factory('fhirObservation', ['$http', 'fhirConfig', 'fhirWaveFormGenerator', function ($http, fhirConfig, fhirWaveFormGenerator) {
     // Service logic
     var resourceType = 'Observation';
     var url = fhirConfig.url + resourceType;
@@ -102,11 +102,15 @@ angular.module('angularFhirResources')
         for (var eidx in newObject.entry) {
           var e = newObject.entry[eidx];
           if (code) {
-            e.resource.code.coding.code = code;
+            e.resource.code.coding[0].code = code;
           }
           e.resource.valueQuantity.value = 0.5 * deviation * Math.random() - 0.5 * deviation * Math.random() + offset;
+          e.resource.appliesDateTime = (new Date()).toISOString();
         }
         return newObject;
+      },
+      generateRandomWaveFormObservation: function (code) {
+        return fhirWaveFormGenerator.nextWaveSamples();
       },
       instantiateEmptyObservation: function () {
         return {
@@ -125,6 +129,12 @@ angular.module('angularFhirResources')
             }
           ]
         };
+      },
+      instantiateEmptyWaveFormObservation: function () {
+        var obs = this.instantiateEmptyObservation();
+        obs.entry[0].resource.valueSampledData = {};
+        delete obs.entry[0].resource.valueQuantity;
+        return obs;
       }
     };
   }]);
