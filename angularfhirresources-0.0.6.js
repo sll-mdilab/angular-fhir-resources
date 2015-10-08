@@ -11,7 +11,8 @@
 angular
   .module('angularFhirResources', [
     'ngRoute',
-    'base64'
+    'base64',
+    'uuid'
   ]);
 
 /**
@@ -557,7 +558,7 @@ angular.module('angularFhirResources')
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirObservation', ['$http', 'fhirConfig', function ($http, fhirConfig) {
+  .factory('fhirObservation', ['$http', 'fhirConfig', 'fhirWaveFormGenerator', function ($http, fhirConfig, fhirWaveFormGenerator) {
     // Service logic
     var resourceType = 'Observation';
     var url = fhirConfig.url + resourceType;
@@ -651,11 +652,15 @@ angular.module('angularFhirResources')
         for (var eidx in newObject.entry) {
           var e = newObject.entry[eidx];
           if (code) {
-            e.resource.code.coding.code = code;
+            e.resource.code.coding[0].code = code;
           }
           e.resource.valueQuantity.value = 0.5 * deviation * Math.random() - 0.5 * deviation * Math.random() + offset;
+          e.resource.appliesDateTime = (new Date()).toISOString();
         }
         return newObject;
+      },
+      generateRandomWaveFormObservation: function (code) {
+        return fhirWaveFormGenerator.nextWaveSamples();
       },
       instantiateEmptyObservation: function () {
         return {
@@ -674,6 +679,12 @@ angular.module('angularFhirResources')
             }
           ]
         };
+      },
+      instantiateEmptyWaveFormObservation: function () {
+        var obs = this.instantiateEmptyObservation();
+        obs.entry[0].resource.valueSampledData = {};
+        delete obs.entry[0].resource.valueQuantity;
+        return obs;
       }
     };
   }]);
@@ -838,3 +849,100 @@ angular.module('angularFhirResources')
       }
     };
   }]);
+
+/**
+ * @ngdoc service
+ * @name angularFhirResources.fhirWaveFormGenerator
+ * @description
+ * # fhirWaveFormGenerator
+ * Factory in the angularFhirResources.
+ */
+(function () {
+  'use strict';
+  angular.module('angularFhirResources')
+    .factory('fhirWaveFormGenerator', _fhirWaveFormGenerator);
+
+  _fhirWaveFormGenerator.$inject = ['rfc4122'];
+
+  function _fhirWaveFormGenerator(rfc4122) {
+    var gen = {};
+
+    const emptyWaveFormObservationObject = {
+      'resourceType': 'Bundle',
+      'entry': [
+        {
+          'resource': {
+            'resourceType': 'Observation',
+            'code': {
+              'coding': [{}]
+            },
+            'valueSampledData': {},
+            'appliesDateTime': '2015-03-26T16:32:40.000',
+            'subject': {}
+          }
+        }
+      ]
+    };
+
+    gen.sampleData = [0.32,0.305,0.3,0.295,0.28500000000000003,0.27,0.27,0.28,0.275,0.275,0.275,0.28,0.28,0.275,0.27,0.275,0.275,0.275,0.275,0.28,0.275,0.28,0.275,0.28,0.28,0.275,0.275,0.28,0.28500000000000003,0.28500000000000003,0.275,0.28,0.28,0.28,0.275,0.26,0.25,0.23,0.21,0.185,0.17,0.15,0.145,0.23,0.34500000000000003,0.465,0.585,0.665,0.79,0.91,1.03,1.1500000000000001,1.27,1.3900000000000001,1.475,1.445,1.3800000000000001,1.3,1.235,1.1500000000000001,1.07,0.995,0.91,0.8250000000000001,0.74,0.66,0.595,0.58,0.595,0.62,0.645,0.67,0.6900000000000001,0.72,0.74,0.745,0.74,0.75,0.75,0.75,0.74,0.745,0.745,0.745,0.735,0.74,0.745,0.745,0.735,0.73,0.735,0.735,0.725,0.725,0.73,0.725,0.72,0.715,0.715,0.715,0.71,0.71,0.71,0.705,0.71,0.7000000000000001,0.7000000000000001,0.7000000000000001,0.6900000000000001,0.685,0.685,0.685,0.685,0.68,0.67,0.67,0.67,0.66,0.655,0.655,0.65,0.645,0.635,0.635,0.635,0.63,0.625,0.615,0.62,0.615,0.61,0.61,0.61,0.595,0.59,0.59,0.585,0.58,0.5650000000000001,0.56,0.56,0.56,0.545,0.545,0.545,0.545,0.545,0.53,0.53,0.535,0.53,0.53,0.53,0.53,0.53,0.525,0.51,0.51,0.5,0.485,0.485,0.47500000000000003,0.47000000000000003,0.455,0.445,0.43,0.41500000000000004,0.395,0.375,0.365,0.35000000000000003,0.33,0.31,0.31,0.305,0.295,0.29,0.29,0.28500000000000003,0.275,0.27,0.27,0.275,0.27,0.27,0.265,0.28,0.275,0.275,0.27,0.275,0.27,0.265,0.27,0.275,0.275,0.275,0.27,0.28,0.275,0.27,0.27,0.27,0.275,0.28,0.275,0.275,0.28,0.28,0.275,0.275,0.28,0.28,0.275,0.275,0.28500000000000003,0.3,0.305,0.315,0.33,0.34,0.35000000000000003,0.355,0.37,0.375,0.38,0.38,0.39,0.405,0.41000000000000003,0.41000000000000003,0.41000000000000003,0.41500000000000004,0.41000000000000003,0.41000000000000003,0.41000000000000003,0.42,0.41000000000000003,0.41000000000000003,0.4,0.4,0.395,0.385,0.38,0.375,0.365,0.36,0.35000000000000003,0.34500000000000003,0.335,0.315,0.305,0.305,0.295,0.28500000000000003,0.275,0.28,0.28,0.275,0.275,0.28,0.28,0.28500000000000003,0.28,0.275,0.28,0.28,0.28,0.28,0.28500000000000003,0.28,0.28500000000000003,0.275,0.28,0.29,0.28500000000000003,0.28,0.28500000000000003,0.28500000000000003,0.28500000000000003,0.28500000000000003,0.28,0.29,0.28,0.275,0.265,0.25,0.23,0.21,0.185,0.165,0.15,0.16,0.25,0.37,0.49,0.605,0.6900000000000001,0.8150000000000001,0.935,1.05,1.17,1.295,1.415,1.49,1.445,1.375,1.295,1.23,1.145,1.065,0.99,0.9,0.81,0.735,0.645,0.59,0.585,0.605,0.63,0.65,0.675,0.6950000000000001,0.72,0.745,0.745,0.745,0.75,0.745,0.745,0.745,0.745,0.745,0.74,0.74,0.745,0.74,0.74,0.735,0.73,0.735,0.735,0.725,0.73,0.73,0.73,0.72,0.715,0.715,0.715,0.715,0.71,0.715,0.715,0.71,0.6950000000000001,0.7000000000000001,0.7000000000000001,0.6950000000000001,0.685,0.685,0.685,0.685,0.675,0.675,0.67,0.665,0.65,0.655,0.655,0.65,0.645,0.635,0.635,0.635,0.625,0.625,0.625,0.62,0.615,0.605,0.605,0.6,0.59,0.585,0.585,0.58,0.5750000000000001,0.5650000000000001,0.56,0.56,0.56,0.55,0.545,0.55,0.545,0.545,0.535,0.535,0.535,0.53,0.53,0.53,0.525,0.525,0.52,0.51,0.505,0.495,0.485,0.48,0.47500000000000003,0.465,0.45,0.435,0.425,0.41000000000000003,0.385,0.37,0.36,0.34500000000000003,0.33,0.31,0.31,0.305,0.3,0.29,0.29,0.28,0.275,0.27,0.27,0.27,0.265,0.265,0.27,0.27,0.27,0.27,0.265,0.275,0.27,0.27,0.265,0.275,0.275,0.27,0.265,0.265,0.275,0.27,0.265,0.27,0.27,0.27,0.265,0.265,0.275,0.27,0.27,0.27,0.28,0.28,0.27,0.275,0.295,0.3,0.31,0.32,0.33,0.34,0.34500000000000003,0.35000000000000003,0.36,0.37,0.37,0.38,0.39,0.395,0.405,0.41000000000000003,0.41500000000000004,0.41500000000000004,0.41000000000000003,0.41000000000000003,0.41000000000000003,0.41500000000000004,0.41500000000000004,0.405,0.4,0.4,0.395,0.385,0.38,0.375,0.37,0.36,0.34500000000000003,0.34,0.33,0.315,0.305,0.3,0.295,0.28500000000000003,0.275,0.275,0.28,0.275,0.275,0.28,0.28500000000000003];
+    gen.rangeHigh = 1.5;
+    gen.rangeLow = -0.5;
+    gen.rate = 171;
+    gen.dataType = 'MDC_ECG_LEAD_I';
+    gen.unit = 'MDC_DIM_MILLI_VOLT';
+    gen.currentIdx = 0;
+    gen.previousIdx = 0;
+    gen.timeFrame = 3000;
+
+    // Public API here
+    return {
+      nextWaveSamples: nextWaveSamples
+    };
+
+
+    function nextWaveSamples() {
+      advanceIndex();
+
+      //var subSamples = getSubSamples();
+
+      return createFhirObservation(gen.sampleData);
+    }
+
+    function advanceIndex() {
+      gen.previousIdx = gen.currentIdx;
+      gen.currentIdx = Date.now() % gen.timeFrame;
+    }
+
+    function getSubSamples() {
+      var subSamples = [];
+      if (gen.previousIdx < gen.currentIdx) {
+        // General case
+        subSamples = gen.sampleData.slice(gen.previousIdx, gen.currentIdx);
+      } else {
+        // When current point has started from the beginning again
+        subSamples = gen.sampleData.slice(gen.previousIdx, gen.sampleData.length);
+        Array.prototype.push.apply(subSamples, gen.sampleData.slice(0, gen.currentIdx));
+      }
+      return subSamples;
+    }
+
+    function createFhirObservation(subSamples){
+      var obs = angular.copy(emptyWaveFormObservationObject);
+      obs.entry[0].resource.code.coding[0] = {
+        system: 'MDC',
+        code: gen.dataType
+      };
+      obs.entry[0].resource.id = rfc4122.v4();
+      obs.entry[0].resource.appliesDateTime = (new Date()).toISOString();
+      obs.entry[0].resource.valueSampledData.period = 1000 / gen.rate;
+      obs.entry[0].resource.valueSampledData.lowerLimit = gen.rangeLow;
+      obs.entry[0].resource.valueSampledData.upperLimit = gen.rangeHigh;
+      obs.entry[0].resource.valueSampledData.origin =  {
+          "value": 0,
+          "units": gen.unit
+      };
+      obs.entry[0].resource.valueSampledData.data = subSamples.join(' ');
+      return obs;
+    }
+  }
+})();
