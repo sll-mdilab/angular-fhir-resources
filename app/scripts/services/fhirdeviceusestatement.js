@@ -16,7 +16,6 @@ angular.module('angularFhirResources')
 
     var addDeviceDataTmpl = {
       'resourceType': resourceType,
-      'id': 'example',
       'device': {
         'reference': 'Device/%(deviceId)s'
       },
