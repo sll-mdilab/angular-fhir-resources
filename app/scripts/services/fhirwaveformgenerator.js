@@ -25,7 +25,7 @@
               'coding': [{}]
             },
             'valueSampledData': {},
-            'appliesDateTime': '2015-03-26T16:32:40.000',
+            'effectiveDateTime': '2015-03-26T16:32:40.000',
             'subject': {}
           }
         }
@@ -81,7 +81,7 @@
         code: gen.dataType
       };
       obs.entry[0].resource.id = rfc4122.v4();
-      obs.entry[0].resource.appliesDateTime = (new Date()).toISOString();
+      obs.entry[0].resource.effectiveDateTime = (new Date()).toISOString();
       obs.entry[0].resource.valueSampledData.period = 1000 / gen.rate;
       obs.entry[0].resource.valueSampledData.lowerLimit = gen.rangeLow;
       obs.entry[0].resource.valueSampledData.upperLimit = gen.rangeHigh;

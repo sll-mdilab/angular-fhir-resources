@@ -105,7 +105,7 @@ angular.module('angularFhirResources')
             e.resource.code.coding[0].code = code;
           }
           e.resource.valueQuantity.value = 0.5 * deviation * Math.random() - 0.5 * deviation * Math.random() + offset;
-          e.resource.appliesDateTime = (new Date()).toISOString();
+          e.resource.effectiveDateTime = (new Date()).toISOString();
         }
         return newObject;
       },
@@ -123,7 +123,7 @@ angular.module('angularFhirResources')
                   'coding': [{}]
                 },
                 'valueQuantity': {},
-                'appliesDateTime': '2015-03-26T16:32:40.000',
+                'effectiveDateTime': '2015-03-26T16:32:40.000',
                 'subject': {}
               }
             }
