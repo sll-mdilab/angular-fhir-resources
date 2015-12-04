@@ -23,7 +23,7 @@ angular.module('angularFhirResources')
             subject: patientId,
             date: dateRange,
             _format: 'json',
-            _summary: true
+            "-summary": true
           }
         }).then(function (response) {
           return response.data;
@@ -41,7 +41,7 @@ angular.module('angularFhirResources')
             'device.identifier': deviceId,
             date: dateRange,
             _format: 'json',
-            _summary: true
+            "-summary": true
           }
         }).then(function (response) {
           return response.data;

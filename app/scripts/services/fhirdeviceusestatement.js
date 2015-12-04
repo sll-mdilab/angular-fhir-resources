@@ -12,7 +12,7 @@ angular.module('angularFhirResources')
     // Service logic
     var resourceType = 'DeviceUseStatement';
     var baseUrl = fhirConfig.url + resourceType;
-    var activeDeviceUrl = baseUrl + '?whenUsed.end:missing=true&patient.identifier=%(pid)s&_format=json';
+    var activeDeviceUrl = baseUrl + '?end:missing=true&patient.identifier=%(pid)s&_format=json';
 
     var addDeviceDataTmpl = {
       'resourceType': resourceType,
@@ -35,6 +35,10 @@ angular.module('angularFhirResources')
         'reference': 'Practitioner/%(practitionerId)s'
       }
     };
+
+    function getCurrentDatetime() {
+      return new Date().toISOString();
+    }
 
     function populateTemplate(obj, key, replacements) {
       if (typeof key === 'string') {
@@ -107,7 +111,7 @@ angular.module('angularFhirResources')
           deviceId: deviceId,
           patientId: patientId,
           practitionerId: practitionerId,
-          date: new Date().toISOString()
+          date: getCurrentDatetime()
         };
         var practitionerExtension = angular.copy(practitionerDataTmpl);
         populateTemplate(postData, 'device.reference', replacements);
