@@ -8,7 +8,7 @@
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirEpisodeOfCare', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
+  .factory('fhirEpisodeOfCare', ['$http', '$filter', 'fhirConfig', 'Utilities', function ($http, $filter, fhirConfig, Utilities) {
     // Service logic
     var baseUrl = fhirConfig.url;
     var resourceType = 'EpisodeOfCare';
@@ -32,14 +32,7 @@ angular.module('angularFhirResources')
             _include: includeList
           }
         }).then(function (response) {
-          var result = {};
-          for (var i in response.data.entry) {
-            var resource = response.data.entry[i].resource;
-            var type = resource.resourceType;
-            if (!result[type]) { result[type] = {}; }
-            result[type][resource.id] = resource;
-          }
-          return result;
+          return Utilities.formatFhirResponse(response);
         });
       },
       /**
