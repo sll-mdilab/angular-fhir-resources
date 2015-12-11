@@ -15,6 +15,31 @@ angular
     'uuid'
   ]);
 
+'use strict';
+
+/**
+ * @ngdoc service
+ * @name angularFhirResources.Utilities
+ * @description
+ * # Utilities
+ * Service in the angularFhirResources.
+ */
+angular.module('angularFhirResources')
+  .service('Utilities', function () {
+    return {
+      formatFhirResponse: function (response) {
+        var result = {};
+        for (var i in response.data.entry) {
+          var resource = response.data.entry[i].resource;
+          var type = resource.resourceType;
+          if (!result[type]) { result[type] = {}; }
+          result[type][resource.id] = resource;
+        }
+        return result;
+      }
+  	}
+	});
+
 /**
  * @ngdoc service
  * @name angularFhirResources.fhirBrokeringReceiver
@@ -427,18 +452,18 @@ angular.module('angularFhirResources')
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirEncounter', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
+  .factory('fhirEncounter', ['$http', '$filter', 'fhirConfig', 'Utilities', function ($http, $filter, fhirConfig, Utilities) {
     // Service logic
     var baseUrl = fhirConfig.url;
     var resourceType = 'Encounter';
-    var activeStatuses = ['planned', 'arrived', 'in-progress', 'onleave'];
+    var activeStatuses = ['in-progress'];
     var statusOptions = {
-      planned: 'Planerad',
-      arrived: 'Anlänt',
-      'in-progress': 'Pågående',
-      onleave: 'Lämnande',
-      finished: 'Klar',
-      cancelled: 'Avbruten'
+      planned: 'Planned',
+      arrived: 'Arrived',
+      'in-progress': 'In-progress',
+      onleave: 'Onleave',
+      finished: 'Finished',
+      cancelled: 'Cancelled'
     };
 
     var defaultStatus = 'arrived';
@@ -468,6 +493,20 @@ angular.module('angularFhirResources')
           return activeEncounters;
         });
       },
+      getEncounters: function (episodeOfCare, includeList) {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers,
+          params: {
+            episodeofcare: episodeOfCare,
+            _include: includeList
+          }
+        }).then(function (response) {
+          return Utilities.formatFhirResponse(response);
+        });
+      },
       /**
        * Discharge a patient by setting the status to 'finished' and period.end to current time.
        * @param encounter encounter to discharge.
@@ -494,7 +533,7 @@ angular.module('angularFhirResources')
        */
       createEncounter: function (encounter) {
         encounter.resourceType = resourceType;
-        if (!encounter.status) {
+        if (!encounter.status || encounter.status === {}) {
           encounter.status = defaultStatus;
         }
         var url = baseUrl + resourceType;
@@ -522,13 +561,27 @@ angular.module('angularFhirResources')
       },
       /**
        * Empty Encounter template
-       * @returns {{patient: {}, period: {}, location: {location: {}}[], priority: {coding: {}[]}, reason: {coding: {}[]}, participant: {individual: {}}[]}}
+       * @returns {{identifier: [{}], patient: {}, episodeOfCare: {}, serviceProvider: {}, careManager: {}, partOf: {}, period: {}, location: {location: {}}[], 
+       * ... type: {coding: [{}]}, status: {}, class: {}, priority: {coding: [{}]}, reason: {coding: {}[]}, participant: {individual: {}, type: {}}}
        */
       instantiateEmptyEncounter: function () {
         return {
+          identifier: [
+            {}
+          ],
           patient: {},
+          episodeOfCare: {},
+          serviceProvider: {},
+          careManager: {},
           period: {},
-          location: [{location: {}}],
+          location: [{ 
+            location: {} 
+          }],
+          type: { 
+            coding: [{}] 
+          },
+          status: {},
+          class: {},
           priority: {
             coding: [{}]
           },
@@ -538,7 +591,8 @@ angular.module('angularFhirResources')
             ]
           },
           participant: [{
-            individual: {}
+            individual: {},
+            type: {}
           }]
         };
       },
@@ -550,7 +604,95 @@ angular.module('angularFhirResources')
       }
     };
   }]);
+'use strict';
 
+/**
+ * @ngdoc service
+ * @name angularFhirResources.fhirEpisodeOfCare
+ * @description
+ * # fhirEpisodeOfCare
+ * Factory in the angularFhirResources.
+ */
+angular.module('angularFhirResources')
+  .factory('fhirEpisodeOfCare', ['$http', '$filter', 'fhirConfig', 'Utilities', function ($http, $filter, fhirConfig, Utilities) {
+    // Service logic
+    var baseUrl = fhirConfig.url;
+    var resourceType = 'EpisodeOfCare';
+    var defaultStatus = 'active';
+
+    // Public API here
+    return {
+      /**
+       * Get all episodesOfCare for a specific practitioner with a specific status
+       * @returns {*} a list of EpisodesOfCare and referenced objects specified in 'includeList'
+       */
+      getEpisodesOfCare: function (teamMember, status, includeList) {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers,
+          params: {
+            'team-member': teamMember,
+            status: status, 
+            _include: includeList
+          }
+        }).then(function (response) {
+          return Utilities.formatFhirResponse(response);
+        });
+      },
+      /**
+       * Create new EpisodeOfCare.
+       * @param episodeOfCare The complete EpisodeOfCare object.
+       * @returns {*}
+       */
+      createEpisodeOfCare: function (episodeOfCare) {
+        episodeOfCare.resourceType = resourceType;
+        if (!episodeOfCare.status) {
+          episodeOfCare.status = defaultStatus;
+        }
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'POST',
+          url: url,
+          headers: fhirConfig.headers,
+          data: episodeOfCare
+        });
+      },
+      /**
+       * Update existing EpisodeOfCare object.
+       * @param episodeOfCare The complete updated EpisodeOfCare object. episodeOfCare.id determines what object will be replaced.
+       * @returns {*}
+       */
+      updateEpisodeOfCare: function (episodeOfCare) {
+        episodeOfCare.resourceType = resourceType;
+        var url = baseUrl + resourceType + '/' + episodeOfCare.id;
+        return $http({
+          method: 'PUT',
+          url: url,
+          headers: fhirConfig.headers,
+          data: episodeOfCare
+        });
+      },
+      /**
+       * Empty EpisodeOfCare template
+       * @returns {{identifier: [{}], patient: {}, managingOrganization: {}, careManager: {}, careTeam: [{member: {}}] }}
+       */
+      instantiateEmptyEpisodeOfCare: function () {
+        return {
+          identifier: [
+            {}
+          ],
+          patient: {},
+          managingOrganization: {},
+          careManager: {},
+          careTeam: [{
+            member: {}
+          }]
+        };
+      }
+    };
+  }]);
 'use strict';
 
 /**
@@ -696,6 +838,75 @@ angular.module('angularFhirResources')
 
 /**
  * @ngdoc service
+ * @name angularFhirResources.fhirOrganization
+ * @description
+ * # fhirOrganization
+ * Factory in the angularFhirResources.
+ */
+angular.module('angularFhirResources')
+  .factory('fhirOrganization', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
+    // Service logic
+    var baseUrl = fhirConfig.url;
+    var resourceType = 'Organization';
+
+    // Public API here
+    return {
+      /**
+       * Get Organization by params
+       * @param params A param object
+       * {
+       *  organizationId: 'ID of an Organization',
+       *  includeResourceType: 'optional to include resource type as prefix in request'
+       * }
+       * @returns {*}
+       */
+      getOrganization: function (params) {
+        var url = baseUrl;
+        if (params.includeResourceType) {
+          url += resourceType + '/';
+        }
+        url += params.organizationId;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers
+        }).then(function (response) {
+          return response.data;
+        });
+      },
+      /**
+       * Create a new Organization
+       * @param organization A complete Organization to be created
+       * @returns {*}
+       */
+      createOrganization: function (organization) {
+        var url = baseUrl + resourceType;
+        organization.resourceType = resourceType;
+        return $http({
+          method: 'POST',
+          url: url,
+          data: organization,
+          headers: fhirConfig.headers
+        });
+      },
+      /**
+       * Empty Organization template
+       * @returns {{ identifier: [{}], name: {} }}
+       */
+      instantiateEmptyOrganization: function () {
+        return {
+          identifier: [
+            {}
+          ],
+          name: {}
+        };
+      }
+    };
+  }]);
+'use strict';
+
+/**
+ * @ngdoc service
  * @name angularFhirResources.fhirPatient
  * @description
  * # fhirPatient
@@ -749,11 +960,14 @@ angular.module('angularFhirResources')
       },
       /**
        * Empty Patient template
-       * @returns {{identifier: Array, address: Array, name: {given: Array, family: Array}[], telecom: {system: string}[], photo: {}}}
+       * @returns {{identifier: [{}], gender: {}, address: {}, name: {given: [], family: []}, telecom: [{system: string}], photo: {} }}
        */
       instantiateEmptyPatient: function () {
         return {
-          identifier: [],
+          identifier: [
+            {}
+          ],
+          gender: {},
           address: [],
           name: [{
             given: [],
@@ -765,7 +979,6 @@ angular.module('angularFhirResources')
       }
     };
   }]);
-
 'use strict';
 
 /**
@@ -849,6 +1062,100 @@ angular.module('angularFhirResources')
             }
           ]
         };
+      }
+    };
+  }]);
+
+'use strict';
+
+/**
+ * @ngdoc service
+ * @name angularFhirResources.fhirReferralRequest
+ * @description
+ * # fhirReferralRequest
+ * Factory in the angularFhirResources.
+ */
+angular.module('angularFhirResources')
+  .factory('fhirReferralRequest', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
+    // Service logic
+    var baseUrl = fhirConfig.url;
+    var resourceType = 'ReferralRequest';
+
+    var defaultStatus = 'requested';
+
+    // Public API here
+    return {
+      /**
+       * Get all ReferralRequests with status counted as 'Ongoing':
+       *    'requested', 'active', 'accepted', 'rejected'
+       * @returns {*} a list of ReferralRequests
+       */
+      getAllReferralRequests: function () {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers
+        }).then(function (response) {
+          return response;
+        });
+      },
+      /**
+       * Complete a referralRequest by setting the status to 'finished'
+       * @param referralRequest ReferralRequest to complete.
+       * @returns {*} a promise
+       */
+      completeReferralRequest: function (referralRequest) {
+        var url = baseUrl + resourceType + '/' + referralRequest.id;
+        referralRequest.status = 'completed';
+        return $http({
+          method: 'PUT',
+          url: url,
+          headers: fhirConfig.headers,
+          data: referralRequest
+        });
+      },
+      /**
+       * Create new referralRequest.
+       * @param referralRequest The complete ReferralRequest object.
+       * @returns {*}
+       */
+      createReferralRequest: function (referralRequest) {
+        referralRequest.resourceType = resourceType;
+        if (!referralRequest.status) {
+          referralRequest.status = defaultStatus;
+        }
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'POST',
+          url: url,
+          headers: fhirConfig.headers,
+          data: referralRequest
+        });
+      },
+      /**
+       * Empty ReferralRequest template
+       * @returns {{identifier: [{}], patient: {}, type: {coding: [{}]}, requester: {}, recipient: {}, encounter: {}}
+       */
+      instantiateEmptyReferralRequest: function () {
+        return {
+          identifier: [
+            {}
+          ], 
+          patient: {},
+          type: { 
+            coding: [{}] 
+          },
+          requester: {},
+          recipient: {},
+          encounter: {}
+        };
+      },
+      getActiveStatuses: function () {
+        return ongoingStatuses;
+      },
+      getStatusOptions: function () {
+        return statusOptions;
       }
     };
   }]);
