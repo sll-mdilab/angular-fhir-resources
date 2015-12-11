@@ -8,18 +8,18 @@
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirEncounter', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
+  .factory('fhirEncounter', ['$http', '$filter', 'fhirConfig', 'Utilities', function ($http, $filter, fhirConfig, Utilities) {
     // Service logic
     var baseUrl = fhirConfig.url;
     var resourceType = 'Encounter';
-    var activeStatuses = ['planned', 'arrived', 'in-progress', 'onleave'];
+    var activeStatuses = ['in-progress'];
     var statusOptions = {
-      planned: 'Planerad',
-      arrived: 'Anlänt',
-      'in-progress': 'Pågående',
-      onleave: 'Lämnande',
-      finished: 'Klar',
-      cancelled: 'Avbruten'
+      planned: 'Planned',
+      arrived: 'Arrived',
+      'in-progress': 'In-progress',
+      onleave: 'Onleave',
+      finished: 'Finished',
+      cancelled: 'Cancelled'
     };
 
     var defaultStatus = 'arrived';
@@ -49,6 +49,20 @@ angular.module('angularFhirResources')
           return activeEncounters;
         });
       },
+      getEncounters: function (episodeOfCare, includeList) {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers,
+          params: {
+            episodeofcare: episodeOfCare,
+            _include: includeList
+          }
+        }).then(function (response) {
+          return Utilities.formatFhirResponse(response);
+        });
+      },
       /**
        * Discharge a patient by setting the status to 'finished' and period.end to current time.
        * @param encounter encounter to discharge.
@@ -75,7 +89,7 @@ angular.module('angularFhirResources')
        */
       createEncounter: function (encounter) {
         encounter.resourceType = resourceType;
-        if (!encounter.status) {
+        if (!encounter.status || encounter.status === {}) {
           encounter.status = defaultStatus;
         }
         var url = baseUrl + resourceType;
@@ -103,13 +117,27 @@ angular.module('angularFhirResources')
       },
       /**
        * Empty Encounter template
-       * @returns {{patient: {}, period: {}, location: {location: {}}[], priority: {coding: {}[]}, reason: {coding: {}[]}, participant: {individual: {}}[]}}
+       * @returns {{identifier: [{}], patient: {}, episodeOfCare: {}, serviceProvider: {}, careManager: {}, partOf: {}, period: {}, location: {location: {}}[], 
+       * ... type: {coding: [{}]}, status: {}, class: {}, priority: {coding: [{}]}, reason: {coding: {}[]}, participant: {individual: {}, type: {}}}
        */
       instantiateEmptyEncounter: function () {
         return {
+          identifier: [
+            {}
+          ],
           patient: {},
+          episodeOfCare: {},
+          serviceProvider: {},
+          careManager: {},
           period: {},
-          location: [{location: {}}],
+          location: [{ 
+            location: {} 
+          }],
+          type: { 
+            coding: [{}] 
+          },
+          status: {},
+          class: {},
           priority: {
             coding: [{}]
           },
@@ -119,7 +147,8 @@ angular.module('angularFhirResources')
             ]
           },
           participant: [{
-            individual: {}
+            individual: {},
+            type: {}
           }]
         };
       },

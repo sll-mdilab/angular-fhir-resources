@@ -2,34 +2,34 @@
 
 /**
  * @ngdoc service
- * @name angularFhirResources.fhirPatient
+ * @name angularFhirResources.fhirOrganization
  * @description
- * # fhirPatient
+ * # fhirOrganization
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirPatient', ['$http', 'fhirConfig', function ($http, fhirConfig) {
+  .factory('fhirOrganization', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
     // Service logic
     var baseUrl = fhirConfig.url;
-    var resourceType = 'Patient';
+    var resourceType = 'Organization';
 
     // Public API here
     return {
       /**
-       * Get Patient by params
+       * Get Organization by params
        * @param params A param object
        * {
-       *  patientId: 'ID of a Patient',
+       *  organizationId: 'ID of an Organization',
        *  includeResourceType: 'optional to include resource type as prefix in request'
        * }
        * @returns {*}
        */
-      getPatient: function (params) {
+      getOrganization: function (params) {
         var url = baseUrl;
         if (params.includeResourceType) {
           url += resourceType + '/';
         }
-        url += params.patientId;
+        url += params.organizationId;
         return $http({
           method: 'GET',
           url: url,
@@ -39,37 +39,30 @@ angular.module('angularFhirResources')
         });
       },
       /**
-       * Create a new Patient
-       * @param patient A complete Patient to be created
+       * Create a new Organization
+       * @param organization A complete Organization to be created
        * @returns {*}
        */
-      createPatient: function (patient) {
+      createOrganization: function (organization) {
         var url = baseUrl + resourceType;
-        patient.resourceType = resourceType;
+        organization.resourceType = resourceType;
         return $http({
           method: 'POST',
           url: url,
-          data: patient,
+          data: organization,
           headers: fhirConfig.headers
         });
       },
       /**
-       * Empty Patient template
-       * @returns {{identifier: [{}], gender: {}, address: {}, name: {given: [], family: []}, telecom: [{system: string}], photo: {} }}
+       * Empty Organization template
+       * @returns {{ identifier: [{}], name: {} }}
        */
-      instantiateEmptyPatient: function () {
+      instantiateEmptyOrganization: function () {
         return {
           identifier: [
             {}
           ],
-          gender: {},
-          address: [],
-          name: [{
-            given: [],
-            family: []
-          }],
-          telecom: [{system: 'email'}, {system: 'phone'}],
-          photo: [{}]
+          name: {}
         };
       }
     };
