@@ -493,7 +493,11 @@ angular.module('angularFhirResources')
           return activeEncounters;
         });
       },
-      getEncounters: function (episodeOfCare, includeList) {
+      /**
+       * Get all encounters of a specific episode of care
+       * @returns {*} a list of Encounters with included objects specified in 'includeList'
+       */
+      getEncounters: function (episodeOfCare, status, includeList) {
         var url = baseUrl + resourceType;
         return $http({
           method: 'GET',
@@ -501,6 +505,7 @@ angular.module('angularFhirResources')
           headers: fhirConfig.headers,
           params: {
             episodeofcare: episodeOfCare,
+            status: status,
             _include: includeList
           }
         }).then(function (response) {
@@ -852,6 +857,25 @@ angular.module('angularFhirResources')
     // Public API here
     return {
       /**
+       * Get all Organization
+       * @returns {*}
+       */
+      getAllOrganizations: function (params) {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers
+        }).then(function (response) {
+          var resources = response.data.entry;
+          var organizations = [];
+          for (var idx in resources) {
+            organizations.push(resources[idx].resource);
+          }
+          return organizations;
+        });
+      },
+      /**
        * Get Organization by params
        * @param params A param object
        * {
@@ -1076,7 +1100,7 @@ angular.module('angularFhirResources')
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirReferralRequest', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
+  .factory('fhirReferralRequest', ['$http', '$filter', 'fhirConfig', 'Utilities', function ($http, $filter, fhirConfig, Utilities) {
     // Service logic
     var baseUrl = fhirConfig.url;
     var resourceType = 'ReferralRequest';
@@ -1086,28 +1110,31 @@ angular.module('angularFhirResources')
     // Public API here
     return {
       /**
-       * Get all ReferralRequests with status counted as 'Ongoing':
-       *    'requested', 'active', 'accepted', 'rejected'
+       * Get ReferralRequests based on patient and status
        * @returns {*} a list of ReferralRequests
        */
-      getAllReferralRequests: function () {
+      getReferralRequests: function (patient, status, includeList) {
         var url = baseUrl + resourceType;
         return $http({
           method: 'GET',
           url: url,
-          headers: fhirConfig.headers
+          headers: fhirConfig.headers,
+          params: {
+            patient: patient,
+            status: status, 
+            _include: includeList
+          }
         }).then(function (response) {
-          return response;
+          return Utilities.formatFhirResponse(response);
         });
       },
       /**
-       * Complete a referralRequest by setting the status to 'finished'
-       * @param referralRequest ReferralRequest to complete.
-       * @returns {*} a promise
+       * Update existing ReferralRequest object.
+       * @param encounter The complete updated ReferralRequest object. referralRequest.id determines what object will be replaced.
+       * @returns {*}
        */
-      completeReferralRequest: function (referralRequest) {
+      updateReferralRequest: function (referralRequest) {
         var url = baseUrl + resourceType + '/' + referralRequest.id;
-        referralRequest.status = 'completed';
         return $http({
           method: 'PUT',
           url: url,
@@ -1143,9 +1170,6 @@ angular.module('angularFhirResources')
             {}
           ], 
           patient: {},
-          type: { 
-            coding: [{}] 
-          },
           requester: {},
           recipient: {},
           encounter: {}
