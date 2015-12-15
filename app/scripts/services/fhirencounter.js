@@ -49,7 +49,11 @@ angular.module('angularFhirResources')
           return activeEncounters;
         });
       },
-      getEncounters: function (episodeOfCare, includeList) {
+      /**
+       * Get all encounters of a specific episode of care
+       * @returns {*} a list of Encounters with included objects specified in 'includeList'
+       */
+      getEncounters: function (episodeOfCare, status, includeList) {
         var url = baseUrl + resourceType;
         return $http({
           method: 'GET',
@@ -57,6 +61,7 @@ angular.module('angularFhirResources')
           headers: fhirConfig.headers,
           params: {
             episodeofcare: episodeOfCare,
+            status: status,
             _include: includeList
           }
         }).then(function (response) {

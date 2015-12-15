@@ -16,6 +16,25 @@ angular.module('angularFhirResources')
     // Public API here
     return {
       /**
+       * Get all Organization
+       * @returns {*}
+       */
+      getAllOrganizations: function (params) {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers
+        }).then(function (response) {
+          var resources = response.data.entry;
+          var organizations = [];
+          for (var idx in resources) {
+            organizations.push(resources[idx].resource);
+          }
+          return organizations;
+        });
+      },
+      /**
        * Get Organization by params
        * @param params A param object
        * {
