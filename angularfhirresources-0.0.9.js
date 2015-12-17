@@ -36,7 +36,14 @@ angular.module('angularFhirResources')
           result[type][resource.id] = resource;
         }
         return result;
-      }
+      },
+      getFhirResourceList: function(resources) {
+        var list = [];
+        for (var idx in resources) {
+          list.push(resources[idx].resource);
+        }
+        return list;
+      } 
   	}
 	});
 
@@ -486,11 +493,7 @@ angular.module('angularFhirResources')
           headers: fhirConfig.headers
         }).then(function (response) {
           var activeResources = $filter('filter')(response.data.entry, statusActive);
-          var activeEncounters = [];
-          for (var idx in activeResources) {
-            activeEncounters.push(activeResources[idx].resource);
-          }
-          return activeEncounters;
+          return Utilities.getFhirResourceList(activeResources);
         });
       },
       /**
@@ -702,6 +705,50 @@ angular.module('angularFhirResources')
 
 /**
  * @ngdoc service
+ * @name angularFhirResources.fhirMedication
+ * @description
+ * # fhirMedication
+ * Factory in the angularFhirResources.
+ */
+angular.module('angularFhirResources')
+  .factory('fhirMedication', ['$http', 'fhirConfig', 'Utilities', function ($http, fhirConfig, Utilities) {
+    // Service logic
+    var baseUrl = fhirConfig.url;
+    var resourceType = 'Medication';
+    var resourcePrefix = resourceType + '/';
+
+    // Public API here
+    return {
+      /**
+       * Get all registered Medication
+       * @returns {*}
+       */
+      getAllMedication: function () {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers
+        }).then(function (response) {
+          return Utilities.getFhirResourceList(response.data.entry);
+        });
+      },
+      /**
+       * Empty Medication template
+       * @returns { code: { text: {} }
+       */
+      initiateEmptyMedication: function () {
+        return {
+          code: { text: {} }
+        };
+      }
+    };
+  }]);
+
+'use strict';
+
+/**
+ * @ngdoc service
  * @name angularFhirResources.fhirObservation
  * @description
  * # fhirObservation
@@ -867,12 +914,7 @@ angular.module('angularFhirResources')
           url: url,
           headers: fhirConfig.headers
         }).then(function (response) {
-          var resources = response.data.entry;
-          var organizations = [];
-          for (var idx in resources) {
-            organizations.push(resources[idx].resource);
-          }
-          return organizations;
+          return Utilities.getFhirResourceList(response.data.entry);
         });
       },
       /**
