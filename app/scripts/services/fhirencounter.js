@@ -42,11 +42,7 @@ angular.module('angularFhirResources')
           headers: fhirConfig.headers
         }).then(function (response) {
           var activeResources = $filter('filter')(response.data.entry, statusActive);
-          var activeEncounters = [];
-          for (var idx in activeResources) {
-            activeEncounters.push(activeResources[idx].resource);
-          }
-          return activeEncounters;
+          return Utilities.getFhirResourceList(activeResources);
         });
       },
       /**

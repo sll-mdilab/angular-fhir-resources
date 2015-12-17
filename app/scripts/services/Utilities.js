@@ -19,6 +19,13 @@ angular.module('angularFhirResources')
           result[type][resource.id] = resource;
         }
         return result;
-      }
+      },
+      getFhirResourceList: function(resources) {
+        var list = [];
+        for (var idx in resources) {
+          list.push(resources[idx].resource);
+        }
+        return list;
+      } 
   	}
 	});

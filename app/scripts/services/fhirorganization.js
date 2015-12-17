@@ -26,12 +26,7 @@ angular.module('angularFhirResources')
           url: url,
           headers: fhirConfig.headers
         }).then(function (response) {
-          var resources = response.data.entry;
-          var organizations = [];
-          for (var idx in resources) {
-            organizations.push(resources[idx].resource);
-          }
-          return organizations;
+          return Utilities.getFhirResourceList(response.data.entry);
         });
       },
       /**
