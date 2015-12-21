@@ -2,13 +2,13 @@
 
 /**
  * @ngdoc service
- * @name angularFhirResources.fhirMedication
+ * @name angularFhirResources.fhirMedicationOrder
  * @description
- * # fhirMedication
+ * # fhirMedicationOrder
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirMedication', ['$http', 'fhirConfig', 'Utilities', function ($http, fhirConfig, Utilities) {
+  .factory('fhirMedicationOrder', ['$http', 'fhirConfig', 'Utilities', function ($http, fhirConfig, Utilities) {
     // Service logic
     var baseUrl = fhirConfig.url;
     var resourceType = 'MedicationOrder';
