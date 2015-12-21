@@ -896,7 +896,7 @@ angular.module('angularFhirResources')
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirOrganization', ['$http', '$filter', 'fhirConfig', function ($http, $filter, fhirConfig) {
+  .factory('fhirOrganization', ['$http', '$filter', 'fhirConfig', 'Utilities', function ($http, $filter, fhirConfig, Utilities) {
     // Service logic
     var baseUrl = fhirConfig.url;
     var resourceType = 'Organization';
