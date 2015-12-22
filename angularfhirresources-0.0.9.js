@@ -760,31 +760,56 @@ angular.module('angularFhirResources')
     var baseUrl = fhirConfig.url;
     var resourceType = 'MedicationOrder';
     var resourcePrefix = resourceType + '/';
+    var defaultStatus = 'draft';
 
     // Public API here
     return {
       /**
-       * Get all registered Medication
+       * Get all registered Medication 
        * @returns {*}
        */
-      getMedicationOrdersForPatient: function (patient) {
+      getMedicationOrdersForPatient: function (patient, includeList) {
         var url = baseUrl + resourceType;
         return $http({
           method: 'GET',
           url: url,
           headers: fhirConfig.headers,
           params: {
-            patient: patient
+            patient: patient,
+            _include: includeList
           }
         }).then(function (response) {
-          return Utilities.getFhirResourceList(response.data.entry);
+          return Utilities.formatFhirResponse(response);
         });
       },
+      /**
+       * Create new MedicationOrder.
+       * @param medicationOrder The complete MedicationOrder object.
+       * @returns {*}
+       */
       createMedicationOrder: function (medicationOrder) {
+        if (!medicationOrder.status || medicationOrder.status === {}) {
+          medicationOrder.status = defaultStatus;
+        }
         medicationOrder.resourceType = resourceType;
         var url = baseUrl + resourceType;
         return $http({
           method: 'POST',
+          url: url,
+          headers: fhirConfig.headers,
+          data: medicationOrder
+        });
+      },
+      /**
+       * Update existing MedicationOrder object.
+       * @param medicationOrder The complete updated MedicationOrder object. medicationOrder.id determines what object will be replaced.
+       * @returns {*}
+       */
+      updateMedicationOrder: function (medicationOrder) {
+        medicationOrder.resourceType = resourceType;
+        var url = baseUrl + resourceType + '/' + medicationOrder.id;
+        return $http({
+          method: 'PUT',
           url: url,
           headers: fhirConfig.headers,
           data: medicationOrder
