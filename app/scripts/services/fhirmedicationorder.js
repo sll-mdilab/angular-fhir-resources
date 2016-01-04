@@ -70,7 +70,7 @@ angular.module('angularFhirResources')
       },  
       /**
        * Empty MedicationOrder template
-       * @returns { patient: {}, prescriber: {}, medicationReference: {}, dateWritten: {}, dosageInstruction: [{ text: {} }] }
+       * @returns { patient: {}, prescriber: {}, medicationReference: {}, dateWritten: {}, dosageInstruction: [{ text: {}, additionalInstructions: {} }] }
        */
       initiateEmptyMedicationOrder: function () {
         return {
@@ -79,7 +79,8 @@ angular.module('angularFhirResources')
           medicationReference: {},
           dateWritten: {},
           dosageInstruction: [{ 
-            text: {}
+            text: {},
+            additionalInstructions: {}
           }]
         };
       }
