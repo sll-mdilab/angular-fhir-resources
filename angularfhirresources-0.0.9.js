@@ -893,35 +893,43 @@ angular.module('angularFhirResources')
           }
         );
       },
-      getObservationsByPatientId: function (patientId, dateRange, code) {
-        return $http({
-          method: 'GET',
-          url: url,
-          headers: fhirConfig.headers,
-          params: {
+      getObservationsByPatientId: function (patientId, dateRange, code, sampleRate) {
+				var requestParams = {
             subject: patientId,
             date: dateRange,
             code: code,
             _format: 'json'
-          }
-        }).then(function (response) {
-          return response.data;
-        });
-      },
-      getObservationsByDeviceId: function (deviceId, dateRange, code) {
-        if(deviceId.indexOf('Device/') === 0){
-          deviceId = deviceId.substr('Device/'.length);
-        }
+          };
+				if(sampleRate) {
+					requestParams.sampleRate = sampleRate;
+				}
         return $http({
           method: 'GET',
           url: url,
           headers: fhirConfig.headers,
-          params: {
+          params: requestParams
+        }).then(function (response) {
+          return response.data;
+        });
+      },
+      getObservationsByDeviceId: function (deviceId, dateRange, code, sampleRate) {
+        if(deviceId.indexOf('Device/') === 0){
+          deviceId = deviceId.substr('Device/'.length);
+        }
+				var requestParams = {
             'device.identifier': deviceId,
             date: dateRange,
             code: code,
             _format: 'json'
-          }
+          };
+				if(sampleRate) {
+					requestParams.sampleRate = sampleRate;
+				}
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers,
+          params: requestParams
         }).then(function (response) {
           return response.data;
         });
