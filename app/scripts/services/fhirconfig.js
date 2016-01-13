@@ -31,7 +31,7 @@ angular.module('angularFhirResources')
     this.$get = function($base64) {
       var self = this;
       if(self.authToken) {
-        self.headers['Authorization'] = 'Bearer ' + $base64.encode(authToken);
+        self.headers['Authorization'] = 'Bearer ' + authToken;
       } else {
         var authData = $base64.encode(self.apiUser + ':' + self.apiKey);
         self.headers['Authorization'] = 'Basic ' + authData;
@@ -44,7 +44,7 @@ angular.module('angularFhirResources')
         },
         setAuthToken: function(authToken){
           self.authToken = authToken;
-          self.headers['Authorization'] = 'Bearer ' + $base64.encode(authToken);
+          self.headers['Authorization'] = 'Bearer ' + authToken;
         }
       };
     };
