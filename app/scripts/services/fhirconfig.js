@@ -11,6 +11,7 @@ angular.module('angularFhirResources')
   .provider('fhirConfig', function () {
     this.apiUser = undefined;
     this.apiKey = undefined;
+    this.authToken = undefined;
     this.url = undefined;
     this.headers = {'Content-Type': 'application/json+fhir; charset=utf-8'};
 
@@ -19,14 +20,22 @@ angular.module('angularFhirResources')
       this.apiKey = apiKey;
     };
 
+    this.setAuthToken = function(authToken){
+      this.authToken = authToken;
+    };
+
     this.setBackendURL = function (url) {
       this.url = url;
     };
 
     this.$get = function($base64) {
       var self = this;
-      var authData = $base64.encode(self.apiUser + ':' + self.apiKey);
-      self.headers['Authorization'] = 'Basic ' + authData;
+      if(self.authToken) {
+        self.headers['Authorization'] = 'Bearer ' + $base64.encode(authToken);
+      } else {
+        var authData = $base64.encode(self.apiUser + ':' + self.apiKey);
+        self.headers['Authorization'] = 'Basic ' + authData;
+      }
       return {
         url: self.url,
         headers: self.headers,
