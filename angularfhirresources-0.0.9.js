@@ -901,7 +901,7 @@ angular.module('angularFhirResources')
             _format: 'json'
           };
 				if(samplingPeriod) {
-					requestParams.samplingPeriod = samplingPeriod;
+					requestParams['-samplingPeriod'] = samplingPeriod;
 				}
         return $http({
           method: 'GET',
@@ -923,7 +923,7 @@ angular.module('angularFhirResources')
             _format: 'json'
           };
 				if(samplingPeriod) {
-					requestParams.samplingPeriod = samplingPeriod;
+					requestParams['-samplingPeriod'] = samplingPeriod;
 				}
         return $http({
           method: 'GET',
