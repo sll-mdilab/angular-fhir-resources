@@ -41,6 +41,10 @@ angular.module('angularFhirResources')
         headers: self.headers,
         setCustomHeader: function (header, value) {
           self.headers[header] = value;
+        },
+        setAuthToken: function(authToken){
+          self.authToken = authToken;
+          self.headers['Authorization'] = 'Bearer ' + $base64.encode(authToken);
         }
       };
     };
