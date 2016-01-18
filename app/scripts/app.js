@@ -12,5 +12,9 @@ angular
   .module('angularFhirResources', [
     'ngRoute',
     'base64',
-    'uuid'
-  ]);
+    'uuid',
+    'LocalStorageModule'
+  ])
+  .config(['localStorageServiceProvider', function(localStorageServiceProvider){
+    localStorageServiceProvider.setPrefix('angularFhirStorage');
+  }]);
