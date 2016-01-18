@@ -1,12 +1,14 @@
 {
   "name": "angular-fhir-resources",
-  "version": "0.1.2",
-  "main": "angularfhirresources-0.1.2.min.js",
+  "version": "0.2.0",
+  "main": "angularfhirresources-0.2.0.js",
   "dependencies": {
     "angular": "^1.3.0",
     "angular-base64": "~2.0.5",
     "sprintf": "~1.0.2",
-    "angular-uuid-service": "~0.1.0"
+    "angular-uuid-service": "~0.1.0",
+    "fhir-client-js": "file:///Users/alta/Documents/workspace2/client-js/.git",
+    "angular-local-storage": "~0.2.3"
   },
   "devDependencies": {
     "angular-mocks": "^1.3.0"
