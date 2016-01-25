@@ -7,7 +7,7 @@
     "angular-base64": "~2.0.5",
     "sprintf": "~1.0.2",
     "angular-uuid-service": "~0.1.0",
-    "fhir-client-js": "file:///Users/alta/Documents/workspace2/client-js/.git",
+    "fhir-client-js": "sll-mdilab/client-js",
     "angular-local-storage": "~0.2.3"
   },
   "devDependencies": {

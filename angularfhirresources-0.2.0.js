@@ -913,26 +913,25 @@ angular.module('angularFhirResources')
     };
 
     function getDefaultPractitioner(userId) {
-        var defaultPractitioner = 
-        {
-            "resourceType": "Practitioner",
-            "id": userId,
-            "identifier": [
+        return {
+            resourceType: 'Practitioner',
+            id: userId,
+            identifier: [
               {
-                "value": userId
+                value: userId
               }
             ],
-            "name": {
-              "text": "Unregistered Practitioner"
+            name: {
+              text: 'Unregistered Practitioner'
             },
-            "practitionerRole": [
+            practitionerRole: [
               {
-                "role": {
-                  "coding": [
+                role: {
+                  coding: [
                     {
-                      "system": "http://snomed.info/sct",
-                      "code": "158965000",
-                      "display": "Medical practitioner"
+                      system: 'http://snomed.info/sct',
+                      code: '158965000',
+                      display: 'Medical practitioner'
                     }
                   ]
                 }
@@ -1025,15 +1024,15 @@ angular.module('angularFhirResources')
           }
         );
       },
-      getObservationsByPatientId: function (patientId, dateRange, code, sampleRate) {
+      getObservationsByPatientId: function (patientId, dateRange, code, samplingPeriod) {
 				var requestParams = {
             subject: patientId,
             date: dateRange,
             code: code,
             _format: 'json'
           };
-				if(sampleRate) {
-					requestParams.sampleRate = sampleRate;
+				if(samplingPeriod) {
+					requestParams['-samplingPeriod'] = samplingPeriod;
 				}
         return $http({
           method: 'GET',
@@ -1044,7 +1043,7 @@ angular.module('angularFhirResources')
           return response.data;
         });
       },
-      getObservationsByDeviceId: function (deviceId, dateRange, code, sampleRate) {
+      getObservationsByDeviceId: function (deviceId, dateRange, code, samplingPeriod) {
         if(deviceId.indexOf('Device/') === 0){
           deviceId = deviceId.substr('Device/'.length);
         }
@@ -1054,8 +1053,8 @@ angular.module('angularFhirResources')
             code: code,
             _format: 'json'
           };
-				if(sampleRate) {
-					requestParams.sampleRate = sampleRate;
+				if(samplingPeriod) {
+					requestParams['-samplingPeriod'] = samplingPeriod;
 				}
         return $http({
           method: 'GET',
