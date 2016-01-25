@@ -26,26 +26,25 @@ angular.module('angularFhirResources')
     };
 
     function getDefaultPractitioner(userId) {
-        var defaultPractitioner = 
-        {
-            "resourceType": "Practitioner",
-            "id": userId,
-            "identifier": [
+        return {
+            resourceType: 'Practitioner',
+            id: userId,
+            identifier: [
               {
-                "value": userId
+                value: userId
               }
             ],
-            "name": {
-              "text": "Unregistered Practitioner"
+            name: {
+              text: 'Unregistered Practitioner'
             },
-            "practitionerRole": [
+            practitionerRole: [
               {
-                "role": {
-                  "coding": [
+                role: {
+                  coding: [
                     {
-                      "system": "http://snomed.info/sct",
-                      "code": "158965000",
-                      "display": "Medical practitioner"
+                      system: 'http://snomed.info/sct',
+                      code: '158965000',
+                      display: 'Medical practitioner'
                     }
                   ]
                 }
