@@ -872,7 +872,12 @@ angular.module('angularFhirResources')
        * @returns {*}
        */
       deleteMedicationOrder: function (medicationOrderId) {
-        console.log("delete");
+        var url = baseUrl + resourceType + '/' + medicationOrderId;
+        return $http({
+          method: 'DELETE',
+          url: url,
+          headers: fhirConfig.headers
+        });
       },  
 
       /**
