@@ -69,6 +69,20 @@ angular.module('angularFhirResources')
         });
       },  
       /**
+       * Delete existing MedicationOrder object.
+       * @param medicationOrder The MedicationOrder object.id. The id determines what object will be deleted.
+       * @returns {*}
+       */
+      deleteMedicationOrder: function (medicationOrderId) {
+        var url = baseUrl + resourceType + '/' + medicationOrderId;
+        return $http({
+          method: 'DELETE',
+          url: url,
+          headers: fhirConfig.headers
+        });
+      },  
+
+      /**
        * Empty MedicationOrder template
        * @returns { patient: {}, prescriber: {}, medicationReference: {}, dateWritten: {}, dosageInstruction: [{ text: {}, additionalInstructions: {} }] }
        */
