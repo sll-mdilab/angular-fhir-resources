@@ -60,19 +60,19 @@ angular.module('angularFhirResources')
     this.ready = function(callback, errback) {
     	FHIR.oauth2.settings.replaceBrowserHistory = false;
 
-      function attempt() {
-        console.log("Fetching patient...");
-        smart.api.search({type: "Patient"}).done(function() {
-                console.log("Fetching practitioner.");
-                smart.user.read().done( function(currentPractitioner){
-                  callback(currentPractitioner);
-                }).fail(function() {
-                  callback(getDefaultPractitioner(getIdPart(smart.userId)));
-                });
-            }).fail(attempt);
-      }
-
    		FHIR.oauth2.ready( function(smart) {
+          function attempt() {
+            console.log("Fetching patient...");
+            smart.api.search({type: "Patient"}).done(function() {
+                    console.log("Fetching practitioner.");
+                    smart.user.read().done( function(currentPractitioner){
+                      callback(currentPractitioner);
+                    }).fail(function() {
+                      callback(getDefaultPractitioner(getIdPart(smart.userId)));
+                    });
+                }).fail(attempt);
+          }
+
   	    	console.log('Ready callback.');
 
   	    	fhirConfig.setAuthToken(smart.tokenResponse.access_token);
