@@ -60,24 +60,27 @@ angular.module('angularFhirResources')
     this.ready = function(callback, errback) {
     	FHIR.oauth2.settings.replaceBrowserHistory = false;
 
- 		FHIR.oauth2.ready( function(smart) {
-	    	console.log('Ready callback.');
+      function attempt() {
+        console.log("Fetching patient...");
+        smart.api.search({type: "Patient"}).done(function() {
+                console.log("Fetching practitioner.");
+                smart.user.read().done( function(currentPractitioner){
+                  callback(currentPractitioner);
+                }).fail(function() {
+                  callback(getDefaultPractitioner(getIdPart(smart.userId)));
+                });
+            }).fail(attempt);
+      }
 
-	    	fhirConfig.setAuthToken(smart.tokenResponse.access_token);
-	        console.log(smart.tokenResponse);
-          console.log("Waiting...");
-          $timeout( function() {
+   		FHIR.oauth2.ready( function(smart) {
+  	    	console.log('Ready callback.');
+
+  	    	fhirConfig.setAuthToken(smart.tokenResponse.access_token);
+  	        console.log(smart.tokenResponse);
+            console.log("Waiting...");
             console.log("Waiting done.");
   	        // The first request sometimes give 401, this is a temporary workaround
-  	        smart.api.search({type: "Patient"}).always(function(){
-
-  	            smart.user.read().done( function(currentPractitioner){
-  	                callback(currentPractitioner);
-  	            }).fail(function() {
-  	            	callback(getDefaultPractitioner(getIdPart(smart.userId)));
-  	            });
-  	        });
-        }, 5000);
-	   }, errback);
+  	        attempt();
+  	   }, errback);
     };
   }]);
