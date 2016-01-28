@@ -966,7 +966,9 @@ angular.module('angularFhirResources')
 
 	    	fhirConfig.setAuthToken(smart.tokenResponse.access_token);
 	        console.log(smart.tokenResponse);
+          console.log("Waiting...");
           $timeout( function() {
+            console.log("Waiting done.");
   	        // The first request sometimes give 401, this is a temporary workaround
   	        smart.api.search({type: "Patient"}).always(function(){
 
@@ -976,7 +978,7 @@ angular.module('angularFhirResources')
   	            	callback(getDefaultPractitioner(getIdPart(smart.userId)));
   	            });
   	        });
-        }, 2000);
+        }, 5000);
 	   }, errback);
     };
   }]);

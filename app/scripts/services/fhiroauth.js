@@ -8,7 +8,7 @@
  * Service in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .service('fhirOauth', ['fhirConfig', function (fhirConfig) {
+  .service('fhirOauth', ['fhirConfig', '$timeout', function (fhirConfig, $timeout) {
   	function removeTrailingSlash(url)     
     {     
         return url.replace(/\/$/, "");
@@ -65,15 +65,19 @@ angular.module('angularFhirResources')
 
 	    	fhirConfig.setAuthToken(smart.tokenResponse.access_token);
 	        console.log(smart.tokenResponse);
+          console.log("Waiting...");
+          $timeout( function() {
+            console.log("Waiting done.");
+  	        // The first request sometimes give 401, this is a temporary workaround
+  	        smart.api.search({type: "Patient"}).always(function(){
 
-	        // The first request sometimes give 401, this is a temporary workaround
-	        smart.api.search({type: "Patient"}).always(function(){
-	            smart.user.read().done( function(currentPractitioner){
-	                callback(currentPractitioner);
-	            }).fail(function() {
-	            	callback(getDefaultPractitioner(getIdPart(smart.userId)));
-	            });
-	        });
-	}, errback);
+  	            smart.user.read().done( function(currentPractitioner){
+  	                callback(currentPractitioner);
+  	            }).fail(function() {
+  	            	callback(getDefaultPractitioner(getIdPart(smart.userId)));
+  	            });
+  	        });
+        }, 5000);
+	   }, errback);
     };
   }]);
