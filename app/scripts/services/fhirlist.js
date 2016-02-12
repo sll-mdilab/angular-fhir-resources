@@ -25,7 +25,7 @@ angular.module('angularFhirResources')
        * }
        * @returns {*}
        */
-      getList: function () {
+      getList: function (params) {
         var url = baseUrl;
         if (params.includeResourceType) {
           url += resourcePrefix;
