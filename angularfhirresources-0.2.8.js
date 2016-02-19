@@ -1713,7 +1713,7 @@ angular.module('angularFhirResources')
   function _fhirWaveFormGenerator(rfc4122) {
     var gen = {};
 
-    const emptyWaveFormObservationObject = {
+    var emptyWaveFormObservationObject = {
       'resourceType': 'Bundle',
       'entry': [
         {
