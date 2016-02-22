@@ -1,7 +1,7 @@
 {
   "name": "angular-fhir-resources",
-  "version": "0.2.10",
-  "main": "angularfhirresources-0.2.10.js",
+  "version": "0.2.11",
+  "main": "angularfhirresources-0.2.11.js",
   "dependencies": {
     "angular": "^1.3.0",
     "angular-base64": "~2.0.5",

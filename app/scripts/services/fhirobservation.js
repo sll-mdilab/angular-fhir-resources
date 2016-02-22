@@ -8,7 +8,7 @@
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirObservation', ['$http', 'fhirConfig', 'fhirWaveFormGenerator', function ($http, fhirConfig, fhirWaveFormGenerator) {
+  .factory('fhirObservation', ['$http', 'fhirConfig', 'Utilities', 'fhirWaveFormGenerator', function ($http, fhirConfig, Utilities, fhirWaveFormGenerator) {
     // Service logic
     var resourceType = 'Observation';
     var url = fhirConfig.url + resourceType;
@@ -76,6 +76,24 @@ angular.module('angularFhirResources')
           return response.data;
         });
       },
+      getAnnotationObservationsByPatientId: function (patientId, dateRange, code) {
+        var requestParams = {
+            subject: patientId,
+            date: dateRange,
+            code: code,
+            _format: 'json',
+            'value-quantity:missing': true,
+            '-comments:missing': false
+          };
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers,
+          params: requestParams
+        }).then(function (response) {
+          return Utilities.getFhirResourceList(response.data.entry);
+        });
+      },
       getObservationsByDeviceId: function (deviceId, dateRange, code, samplingPeriod) {
         if(deviceId.indexOf('Device/') === 0){
           deviceId = deviceId.substr('Device/'.length);
@@ -100,12 +118,11 @@ angular.module('angularFhirResources')
       },
       createAnnotationObservation: function (observation) {
         observation.resourceType = resourceType;
-        var url = baseUrl + resourceType;
         return $http({
           method: 'POST',
           url: url,
           headers: fhirConfig.headers,
-          data: encounter
+          data: observation
         });
       },
       generateRandomObservation: function (code, offset, deviation) {
@@ -150,16 +167,17 @@ angular.module('angularFhirResources')
       },
       instantiateEmptyAnnotationObservation: function () {
         return {
-          'resource': {
-            'resourceType': 'Observation',
-            'code': {
-              'coding': [{}]
-            },
-            'comment': {} ,
-            'effectiveDateTime': {},
-            'subject': {},
-            'performer': {}
-          }          
+          'resourceType': 'Observation',
+          'code': {
+            'coding': [{}]
+          },
+          'comments': {} ,
+          'effectivePeriod': {
+            'start': {},
+            'end': {}
+          },
+          'subject': {},
+          'performer': {}         
         };
       },
       instantiateEmptyWaveFormObservation: function () {
