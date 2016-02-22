@@ -58,15 +58,15 @@ angular.module('angularFhirResources')
         );
       },
       getObservationsByPatientId: function (patientId, dateRange, code, samplingPeriod) {
-				var requestParams = {
+        var requestParams = {
             subject: patientId,
             date: dateRange,
             code: code,
             _format: 'json'
           };
-				if(samplingPeriod) {
-					requestParams['-samplingPeriod'] = samplingPeriod;
-				}
+        if(samplingPeriod) {
+          requestParams['-samplingPeriod'] = samplingPeriod;
+        }
         return $http({
           method: 'GET',
           url: url,
@@ -80,15 +80,15 @@ angular.module('angularFhirResources')
         if(deviceId.indexOf('Device/') === 0){
           deviceId = deviceId.substr('Device/'.length);
         }
-				var requestParams = {
+        var requestParams = {
             'device.identifier': deviceId,
             date: dateRange,
             code: code,
             _format: 'json'
           };
-				if(samplingPeriod) {
-					requestParams['-samplingPeriod'] = samplingPeriod;
-				}
+        if(samplingPeriod) {
+          requestParams['-samplingPeriod'] = samplingPeriod;
+        }
         return $http({
           method: 'GET',
           url: url,
@@ -96,6 +96,16 @@ angular.module('angularFhirResources')
           params: requestParams
         }).then(function (response) {
           return response.data;
+        });
+      },
+      createAnnotationObservation: function (observation) {
+        observation.resourceType = resourceType;
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'POST',
+          url: url,
+          headers: fhirConfig.headers,
+          data: encounter
         });
       },
       generateRandomObservation: function (code, offset, deviation) {
@@ -136,6 +146,20 @@ angular.module('angularFhirResources')
               }
             }
           ]
+        };
+      },
+      instantiateEmptyAnnotationObservation: function () {
+        return {
+          'resource': {
+            'resourceType': 'Observation',
+            'code': {
+              'coding': [{}]
+            },
+            'comment': {} ,
+            'effectiveDateTime': {},
+            'subject': {},
+            'performer': {}
+          }          
         };
       },
       instantiateEmptyWaveFormObservation: function () {
