@@ -57,7 +57,7 @@ angular.module('angularFhirResources')
           }
         );
       },
-      getObservationsByPatientId: function (patientId, dateRange, code, samplingPeriod) {
+      getObservationsByPatientId: function (patientId, dateRange, code, samplingPeriod, methodCode) {
         var requestParams = {
             subject: patientId,
             date: dateRange,
@@ -67,6 +67,14 @@ angular.module('angularFhirResources')
         if(samplingPeriod) {
           requestParams['-samplingPeriod'] = samplingPeriod;
         }
+        if (methodCode) {
+          requestParams['-method'] = methodCode;
+        }
+
+        console.log('angular-fhir-resources');
+
+        console.log(requestParams);
+
         return $http({
           method: 'GET',
           url: url,
@@ -116,7 +124,7 @@ angular.module('angularFhirResources')
           return response.data;
         });
       },
-      createAnnotationObservation: function (observation) {
+      createObservation: function (observation) {
         observation.resourceType = resourceType;
         return $http({
           method: 'POST',
@@ -178,6 +186,18 @@ angular.module('angularFhirResources')
           },
           'subject': {},
           'performer': {}         
+        };
+      },
+      instantiateEmptyManualObservation: function () {
+        return {
+          'resourceType': 'Observation',
+          'code': {
+            'coding': [{}]
+          },
+          'valueQuantity': {},
+          'effectiveDateTime': {},
+          'subject': {},
+          'performer': {} 
         };
       },
       instantiateEmptyWaveFormObservation: function () {
