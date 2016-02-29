@@ -51,6 +51,8 @@ angular.module('angularFhirResources')
           url: url,
           headers: fhirConfig.headers,
           data: episodeOfCare
+        }).success(function(response) {
+          return response;
         });
       },
       /**

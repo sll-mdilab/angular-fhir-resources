@@ -65,7 +65,7 @@ angular.module('angularFhirResources')
        * Empty Practitioner template
        * @returns {{identifier: {}[], name: {}, practitionerRole: {role: {coding: {}[]}}[]}}
        */
-      initiateEmptyPractitioner: function () {
+      instantiateEmptyPractitioner: function () {
         return {
           identifier: [
             {}

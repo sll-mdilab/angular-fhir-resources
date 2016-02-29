@@ -81,7 +81,7 @@ angular.module('angularFhirResources')
        * @returns { date: {}, subject: { reference: {} }, source: { reference: {} }, detail : [{ reference: {} }], extension: [{ url: "http://sll-mdilab.net/fhir/Order#alarmlimits", 
             extension: [{ url: lowerAlarm, valueDecimal: {} }, { url: lowerWarning, valueDecimal: {} }, { url: upperWarning, valueDecimal: {} }, { url: upperAlarm, valueDecimal: {} }] }] }
        */
-      initiateEmptyOrder: function () {
+      instantiateEmptyOrder: function () {
         return {
           date: {},
           subject: { reference: {} },

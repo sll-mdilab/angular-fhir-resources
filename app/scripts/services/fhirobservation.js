@@ -59,11 +59,11 @@ angular.module('angularFhirResources')
       },
       getObservationsByPatientId: function (patientId, dateRange, code, samplingPeriod) {
         var requestParams = {
-            subject: patientId,
-            date: dateRange,
-            code: code,
-            _format: 'json'
-          };
+          subject: patientId,
+          date: dateRange,
+          code: code,
+          _format: 'json'
+        };
         if(samplingPeriod) {
           requestParams['-samplingPeriod'] = samplingPeriod;
         }
@@ -78,13 +78,30 @@ angular.module('angularFhirResources')
       },
       getAnnotationObservationsByPatientId: function (patientId, dateRange, code) {
         var requestParams = {
-            subject: patientId,
-            date: dateRange,
-            code: code,
-            _format: 'json',
-            'value-quantity:missing': true,
-            '-comments:missing': false
-          };
+          subject: patientId,
+          date: dateRange,
+          code: code,
+          _format: 'json',
+          'value-quantity:missing': true,
+          '-comments:missing': false
+        };
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers,
+          params: requestParams
+        }).then(function (response) {
+          return Utilities.getFhirResourceList(response.data.entry);
+        });
+      },
+      getManualObservationsByPatientId: function (patientId, dateRange, parameterCode, methodCode) {
+        var requestParams = {
+          subject: patientId,
+          date: dateRange,
+          code: parameterCode,
+          _format: 'json',
+          '-method': methodCode
+        };
         return $http({
           method: 'GET',
           url: url,
@@ -116,7 +133,7 @@ angular.module('angularFhirResources')
           return response.data;
         });
       },
-      createAnnotationObservation: function (observation) {
+      createObservation: function (observation) {
         observation.resourceType = resourceType;
         return $http({
           method: 'POST',
@@ -178,6 +195,24 @@ angular.module('angularFhirResources')
           },
           'subject': {},
           'performer': {}         
+        };
+      },
+      instantiateEmptyManualObservation: function () {
+        return {
+          'resourceType': 'Observation',
+          'code': {
+            'coding': [{}]
+          },
+          'valueQuantity': {},
+          'effectiveDateTime': {},
+          'subject': {},
+          'performer': {} ,
+          'method': {
+            'coding': [{
+              'system': 'http://snomed.info/sct',
+              'code': '362943005'
+            }]
+          }
         };
       },
       instantiateEmptyWaveFormObservation: function () {

@@ -34,7 +34,7 @@ angular.module('angularFhirResources')
        * Empty Medication template
        * @returns { code: { text: {} }
        */
-      initiateEmptyMedication: function () {
+      instantiateEmptyMedication: function () {
         return {
           code: { text: {} }
         };

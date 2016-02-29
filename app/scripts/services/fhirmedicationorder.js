@@ -86,7 +86,7 @@ angular.module('angularFhirResources')
        * Empty MedicationOrder template
        * @returns { patient: {}, prescriber: {}, medicationReference: {}, dateWritten: {}, dosageInstruction: [{ text: {}, additionalInstructions: {} }] }
        */
-      initiateEmptyMedicationOrder: function () {
+      instantiateEmptyMedicationOrder: function () {
         return {
           patient: {},
           prescriber: {},

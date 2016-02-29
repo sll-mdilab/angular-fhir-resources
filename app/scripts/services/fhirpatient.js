@@ -8,13 +8,28 @@
  * Factory in the angularFhirResources.
  */
 angular.module('angularFhirResources')
-  .factory('fhirPatient', ['$http', 'fhirConfig', function ($http, fhirConfig) {
+  .factory('fhirPatient', ['$http', 'fhirConfig', 'Utilities', function ($http, fhirConfig, Utilities) {
     // Service logic
     var baseUrl = fhirConfig.url;
     var resourceType = 'Patient';
 
     // Public API here
     return {
+      /**
+       * Get all patients
+       * @returns {*} a list of Patient objects
+       */
+      getAllPatients: function () {
+        var url = baseUrl + resourceType;
+        return $http({
+          method: 'GET',
+          url: url,
+          headers: fhirConfig.headers,
+          params: {}
+        }).then(function (response) {
+          return Utilities.formatFhirResponse(response);
+        });
+      },
       /**
        * Get Patient by params
        * @param params A param object

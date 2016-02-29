@@ -43,7 +43,7 @@ angular.module('angularFhirResources')
        * Empty List template
        * @returns { code: { text: {} }
        */
-      initiateEmptyList: function () {
+      instantiateEmptyList: function () {
         return {
           status: "current",
           mode: "working",
