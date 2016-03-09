@@ -209,8 +209,9 @@ angular.module('angularFhirResources')
           'performer': {} ,
           'method': {
             'coding': [{
-              'system': 'http://snomed.info/sct',
-              'code': '362943005'
+              'system': 'MDC',
+              'code': 'MMEAS',
+              'display': 'manual-measurement'
             }]
           }
         };
