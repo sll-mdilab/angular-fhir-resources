@@ -15,6 +15,12 @@ angular
     'uuid',
     'LocalStorageModule'
   ])
-  .config(['localStorageServiceProvider', function(localStorageServiceProvider){
+  .config(function($httpProvider, localStorageServiceProvider) {
     localStorageServiceProvider.setPrefix('angularFhirStorage');
-  }]);
+
+    $httpProvider.interceptors.push('fhirAuthInterceptor');
+  });
+
+
+
+

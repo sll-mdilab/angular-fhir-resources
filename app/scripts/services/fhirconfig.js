@@ -15,7 +15,6 @@ angular.module('angularFhirResources')
     this.url = undefined;
     this.oauthClientId = undefined;
     this.oauthRedirectUri = undefined;
-    this.headers = undefined;
 
     this.headers = {'Content-Type': 'application/json+fhir; charset=utf-8'};
     
@@ -60,7 +59,6 @@ angular.module('angularFhirResources')
         setAuthToken: function(authToken) {
           self.authToken = authToken;
           self.headers['Authorization'] = 'Bearer ' + authToken;
-
           localStorageService.set('authToken', self.authToken);
         },
         clearAuthToken: function() {
